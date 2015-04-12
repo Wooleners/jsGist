@@ -39,3 +39,15 @@ String.prototype.trim = function() {
 function ltrim(s){ return s.replace( /^(\s*|　*)/, ""); } 
 function rtrim(s){ return s.replace( /(\s*|　*)$/, ""); }
 ```
+###判断是否由某个字符串开头
+```javascript
+String.prototype.startWith = function (s) {
+    return this.indexOf(s) == 0
+}
+```
+###转义HTML标签
+```javascript
+function HtmlEncode(text) {
+    return text.replace(/&/g, '&').replace(/\"/g, '"').replace(/</g, '<').replace(/>/g, '>')
+}
+```
