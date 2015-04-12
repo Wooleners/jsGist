@@ -158,7 +158,7 @@ function setHomepage() {
 ```
 ###加载资源
 #####css
-```css
+```javascript
 function LoadStyle(url) {
     try {
         document.createStyleSheet(url)
