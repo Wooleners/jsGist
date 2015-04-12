@@ -103,7 +103,7 @@ function isDigit(value) {
 }
 ```
 ###Cookie 
-#setter
+#####setter
 ```javascript
 function setCookie(name, value, Hours) {
     var d = new Date();
@@ -115,7 +115,7 @@ function setCookie(name, value, Hours) {
     document.cookie = name + "=" + escape(value) + ";path=/;expires=" + exp.toGMTString() + ";domain=360doc.com;"
 }
 ```
-#getter
+#####getter
 ```javascript
 function getCookie(name) {
     var arr = document.cookie.match(new RegExp("(^| )" + name + "=([^;]*)(;|$)"));
@@ -156,8 +156,8 @@ function setHomepage() {
     }
 }
 ```
-###加载CSS,JS
-#css
+###加载资源
+#####css
 ```css
 function LoadStyle(url) {
     try {
@@ -172,7 +172,7 @@ function LoadStyle(url) {
     }
 }
 ```
-#js
+#####js
 ```javascript
 function appendscript(src, text, reload, charset) {
     var id = hash(src + text);
