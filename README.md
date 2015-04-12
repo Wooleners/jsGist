@@ -51,3 +51,30 @@ function HtmlEncode(text) {
     return text.replace(/&/g, '&').replace(/\"/g, '"').replace(/</g, '<').replace(/>/g, '>')
 }
 ```
+###对象扩展[旧版本IE无法遍历名为valueOf、toString]
+```javascript
+function extend(des, source){
+	for(var prop in source)
+		des[prop] = source[prop];
+	return des;
+}
+```
+###对象扩展增强版
+```javascript
+function mix(target, source){
+	var args = [].slice.call(arguments), i = 1, key,
+		ride = typeof args[args.length - 1] == "boolean" ? args.pop() : true;
+	if(args.length === 1){
+		target == !this.window ? this : {};
+		i = 0;
+	}
+	while( (soure = args[i++]) ){
+		for(key in source){
+			if(ride || !(key in target)){
+				target[key] = source[key];
+			}
+		}
+	}
+	return target;
+}
+```
