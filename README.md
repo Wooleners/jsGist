@@ -461,4 +461,647 @@ function IsURL(strUrl) {
     }
 }
 ```
+##页面相关
+###getElementsByClassName
+```javascript
+function getElementsByClassName(name) {
+    var tags = document.getElementsByTagName('*') || document.all;
+    var els = [];
+    for (var i = 0; i < tags.length; i++) {
+        if (tags.className) {
+            var cs = tags.className.split(' ');
+            for (var j = 0; j < cs.length; j++) {
+                if (name == cs[j]) {
+                    els.push(tags);
+                    break
+                }
+            }
+        }
+    }
+    return els
+}
+```
+###获取页面高度
+```javascript
+function getPageHeight(){
+    var g = document, a = g.body, f = g.documentElement, d = g.compatMode == "BackCompat"
+                    ? a
+                    : g.documentElement;
+    return Math.max(f.scrollHeight, a.scrollHeight, d.clientHeight);
+}
+````
+###获取页面scrollLeft
+```javascript
+function getPageScrollLeft(){
+    var a = document;
+    return a.documentElement.scrollLeft || a.body.scrollLeft;
+}
+```
+###获取页面可视宽度
+```javascript
+function getPageViewWidth(){
+    var d = document, a = d.compatMode == "BackCompat"
+                    ? d.body
+                    : d.documentElement;
+    return a.clientWidth;
+}
+```
+###获取页面宽度
+```javascript
+function getPageWidth(){
+    var g = document, a = g.body, f = g.documentElement, d = g.compatMode == "BackCompat"
+                    ? a
+                    : g.documentElement;
+    return Math.max(f.scrollWidth, a.scrollWidth, d.clientWidth);
+}
+```
+###获取页面scrollTop
+```javascript
+function getPageScrollTop(){
+    var a = document;
+    return a.documentElement.scrollTop || a.body.scrollTop;
+}
+```
+###获取页面可视高度
+```javascript
+function getPageViewHeight() {
+    var d = document, a = d.compatMode == "BackCompat"
+                    ? d.body
+                    : d.documentElement;
+    return a.clientHeight;
+}
+```
+###去掉url前缀
+```javascript
+function removeUrlPrefix(a){
+    a=a.replace(/：/g,":").replace(/．/g,".").replace(/／/g,"/");
+    while(trim(a).toLowerCase().indexOf("http://")==0){
+        a=trim(a.replace(/http:\/\//i,""));
+    }
+    return a;
+}
+```
+###随机数时间戳
+```javascript
+function uniqueId(){
+    var a=Math.random,b=parseInt;
+    return Number(new Date()).toString()+b(10*a())+b(10*a())+b(10*a());
+}
+```
+###全角半角转换
+```javascript
+//iCase: 0全到半，1半到全，其他不转化
+function chgCase(sStr,iCase){
+    if(typeof sStr != "string" || sStr.length <= 0 || !(iCase === 0 || iCase == 1)){
+        return sStr;
+    }
+    var i,oRs=[],iCode;
+    if(iCase){/*半->全*/
+        for(i=0; i<sStr.length;i+=1){ 
+            iCode = sStr.charCodeAt(i);
+            if(iCode == 32){
+                iCode = 12288;                                
+            }else if(iCode < 127){
+                iCode += 65248;
+            }
+                oRs.push(String.fromCharCode(iCode)); 
+            }                
+    }else{/*全->半*/
+        for(i=0; i<sStr.length;i+=1){ 
+            iCode = sStr.charCodeAt(i);
+            if(iCode == 12288){
+                iCode = 32;
+            }else if(iCode > 65280 && iCode < 65375){
+                iCode -= 65248;                                
+            }
+                oRs.push(String.fromCharCode(iCode)); 
+         }                
+    }                
+    return oRs.join("");                
+}
+```
+###确认是否键盘有效输入值
+```javascript
+function checkKey(iKey){
+    if(iKey == 32 || iKey == 229){return true;}/*空格和异常*/
+    if(iKey>47 && iKey < 58){return true;}/*数字*/
+    if(iKey>64 && iKey < 91){return true;}/*字母*/
+    if(iKey>95 && iKey < 108){return true;}/*数字键盘1*/
+    if(iKey>108 && iKey < 112){return true;}/*数字键盘2*/
+    if(iKey>185 && iKey < 193){return true;}/*符号1*/
+    if(iKey>218 && iKey < 223){return true;}/*符号2*/
+    return false;
+}
+```
+###获取网页被卷去的位置
+```javascript
+function getScrollXY() {
+    return document.body.scrollTop ? {
+        x: document.body.scrollLeft,
+        y: document.body.scrollTop
+    }: {
+        x: document.documentElement.scrollLeft,
+        y: document.documentElement.scrollTop
+    }
+}
+```
+###日期格式化函数+调用方法
+```javascript
+Date.prototype.format = function(format){
+    var o = {
+        "M+" : this.getMonth()+1, //month
+        "d+" : this.getDate(),    //day
+        "h+" : this.getHours(),   //hour
+        "m+" : this.getMinutes(), //minute
+        "s+" : this.getSeconds(), //second
+        "q+" : Math.floor((this.getMonth()+3)/3),  //quarter
+        "S" : this.getMilliseconds() //millisecond
+    };
+    if(/(y+)/.test(format)) format=format.replace(RegExp.$1,
+(this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o){
+        if(new RegExp("("+ k +")").test(format))
+            format = format.replace(RegExp.$1,RegExp.$1.length==1 ? o[k] :("00"+ o[k]).substr((""+ o[k]).length));
+    }
+    return format;
+}
+alert(new Date().format("yyyy-MM-dd hh:mm:ss"));
+时间个性化输出功能
+
+/*
+1、< 60s, 显示为“刚刚”
+2、>= 1min && < 60 min, 显示与当前时间差“XX分钟前”
+3、>= 60min && < 1day, 显示与当前时间差“今天 XX:XX”
+4、>= 1day && < 1year, 显示日期“XX月XX日 XX:XX”
+5、>= 1year, 显示具体日期“XXXX年XX月XX日 XX:XX”
+*/
+function timeFormat(time){
+    var date = new Date(time),
+        curDate = new Date(),
+        year = date.getFullYear(),
+        month = date.getMonth() + 10,
+        day = date.getDate(),
+        hour = date.getHours(),
+        minute = date.getMinutes(),
+        curYear = curDate.getFullYear(),
+        curHour = curDate.getHours(),
+        timeStr;
+ 
+    if(year < curYear){
+        timeStr = year +'年'+ month +'月'+ day +'日 '+ hour +':'+ minute;
+    }else{
+        var pastTime = curDate - date,
+            pastH = pastTime/3600000;
+ 
+        if(pastH > curHour){
+              timeStr = month +'月'+ day +'日 '+ hour +':'+ minute;
+        }else if(pastH >= 1){
+              timeStr = '今天 ' + hour +':'+ minute +'分';
+        }else{
+              var pastM = curDate.getMinutes() - minute;
+              if(pastM > 1){
+                timeStr = pastM +'分钟前';
+              }else{
+                timeStr = '刚刚';
+              }
+        }
+    }
+    return timeStr;
+}
+```
+###解决offsetX兼容性问题
+```javascript
+// 针对火狐不支持offsetX/Y
+function getOffset(e){
+    var target = e.target, // 当前触发的目标对象
+          eventCoord,
+          pageCoord,
+          offsetCoord;
+ 
+    // 计算当前触发元素到文档的距离
+    pageCoord = getPageCoord(target);
+ 
+    // 计算光标到文档的距离
+    eventCoord = {
+        X : window.pageXOffset + e.clientX,
+        Y : window.pageYOffset + e.clientY
+    };
+ 
+    // 相减获取光标到第一个定位的父元素的坐标
+    offsetCoord = {
+        X : eventCoord.X - pageCoord.X,
+        Y : eventCoord.Y - pageCoord.Y
+    };
+    return offsetCoord;
+}
+ 
+function getPageCoord(element){
+    var coord = { X : 0, Y : 0 };
+    // 计算从当前触发元素到根节点为止，
+    // 各级 offsetParent 元素的 offsetLeft 或 offsetTop 值之和
+    while (element){
+        coord.X += element.offsetLeft;
+        coord.Y += element.offsetTop;
+        element = element.offsetParent;
+    }
+    return coord;
+}
+```
+###常用的正则表达式
+```javascript
+//正整数
+/^[0-9]*[1-9][0-9]*$/;
+//负整数
+/^-[0-9]*[1-9][0-9]*$/;
+//正浮点数
+/^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/;   
+//负浮点数
+/^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/;  
+//浮点数
+/^(-?\d+)(\.\d+)?$/;
+//email地址
+/^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
+//url地址
+/^[a-zA-z]+://(\w+(-\w+)*)(\.(\w+(-\w+)*))*(\?\S*)?$/;
+或：^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$ 
+//年/月/日（年-月-日、年.月.日）
+/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/;
+//匹配中文字符
+/[\u4e00-\u9fa5]/;
+//匹配帐号是否合法(字母开头，允许5-10字节，允许字母数字下划线)
+/^[a-zA-Z][a-zA-Z0-9_]{4,9}$/;
+//匹配空白行的正则表达式
+/\n\s*\r/;
+//匹配中国邮政编码
+/[1-9]\d{5}(?!\d)/;
+//匹配身份证
+/\d{15}|\d{18}/;
+//匹配国内电话号码
+/(\d{3}-|\d{4}-)?(\d{8}|\d{7})?/;
+//匹配IP地址
+/((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)/;
+//匹配首尾空白字符的正则表达式
+/^\s*|\s*$/;
+//匹配HTML标记的正则表达式
+< (\S*?)[^>]*>.*?|< .*? />;
+//sql 语句
+^(select|drop|delete|create|update|insert).*$
+//提取信息中的网络链接
+(h|H)(r|R)(e|E)(f|F) *= *('|")?(\w|\\|\/|\.)+('|"| *|>)? 
+//提取信息中的邮件地址
+\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)* 
+//提取信息中的图片链接
+(s|S)(r|R)(c|C) *= *('|")?(\w|\\|\/|\.)+('|"| *|>)? 
+//提取信息中的 IP 地址
+(\d+)\.(\d+)\.(\d+)\.(\d+)
+//取信息中的中国手机号码
+(86)*0*13\d{9} 
+//提取信息中的中国邮政编码
+[1-9]{1}(\d+){5} 
+//提取信息中的浮点数（即小数）
+(-?\d*)\.?\d+ 
+//提取信息中的任何数字
+(-?\d*)(\.\d+)?
+//电话区号
+^0\d{2,3}$
+//腾讯 QQ 号
+^[1-9]*[1-9][0-9]*$ 
+//帐号（字母开头，允许 5-16 字节，允许字母数字下划线）
+^[a-zA-Z][a-zA-Z0-9_]{4,15}$ 
+//中文、英文、数字及下划线
+^[\u4e00-\u9fa5_a-zA-Z0-9]+$
+```
+###返回顶部的通用方法
+```javascript
+function backTop(btnId) {
+    var btn = document.getElementById(btnId);
+    var d = document.documentElement;
+    var b = document.body;
+    window.onscroll = set;
+    btn.style.display = "none";
+    btn.onclick = function() {
+        btn.style.display = "none";
+        window.onscroll = null;
+        this.timer = setInterval(function() {
+            d.scrollTop -= Math.ceil((d.scrollTop + b.scrollTop) * 0.1);
+            b.scrollTop -= Math.ceil((d.scrollTop + b.scrollTop) * 0.1);
+            if ((d.scrollTop + b.scrollTop) == 0) clearInterval(btn.timer, window.onscroll = set);
+            }, 10);
+    };
+    function set() {
+        btn.style.display = (d.scrollTop + b.scrollTop > 100) ? 'block': "none"
+    }
+};
+backTop('goTop');
+```
+###获得URL中GET参数值
+#####用法：如果地址是 test.htm?t1=1&t2=2&t3=3, 那么能取得：GET["t1"], GET["t2"], GET["t3"]
+```javascript
+function get_get(){ 
+    querystr = window.location.href.split("?")
+    if(querystr[1]){
+        GETs = querystr[1].split("&");
+        GET = [];
+        for(i=0;i<GETs.length;i++){
+              tmp_arr = GETs.split("=")
+              key=tmp_arr[0]
+              GET[key] = tmp_arr[1]
+        }
+    }
+    return querystr[1];
+}
+```
+###打开一个窗体通用方法
+```javascript
+function openWindow(url,windowName,width,height){
+    var x = parseInt(screen.width / 2.0) - (width / 2.0); 
+    var y = parseInt(screen.height / 2.0) - (height / 2.0);
+    var isMSIE= (navigator.appName == "Microsoft Internet Explorer");
+    if (isMSIE) {
+        var p = "resizable=1,location=no,scrollbars=no,width=";
+        p = p+width;
+           p = p+",height=";
+           p = p+height;
+        p = p+",left=";
+        p = p+x;
+        p = p+",top=";
+        p = p+y;
+        retval = window.open(url, windowName, p);
+    } else {
+        var win = window.open(url, "ZyiisPopup", "top=" + y + ",left=" + x + ",scrollbars=" + scrollbars + ",dialog=yes,modal=yes,width=" + width + ",height=" + height + ",resizable=no" );
+        eval("try { win.resizeTo(width, height); } catch(e) { }");
+        win.focus();
+    }
+}
+```
+###提取页面代码中所有网址
+```javascript
+var aa = document.documentElement.outerHTML.match(/(url\(|src=|href=)[\"\']*([^\"\'\(\)\<\>\[\] ]+)[\"\'\)]*|(http:\/\/[\w\-\.]+[^\"\'\(\)\<\>\[\] ]+)/ig).join("\r\n").replace(/^(src=|href=|url\()[\"\']*|[\"\'\>\) ]*$/igm,"");
+alert(aa);
+```
+###清除相同的数组
+```javascript
+String.prototype.unique=function(){
+    var x=this.split(/[\r\n]+/);
+    var y='';
+    for(var i=0;i<x.length;i++){
+        if(!new RegExp("^"+x.replace(/([^\w])/ig,"\\$1")+"$","igm").test(y)){
+            y+=x+"\r\n"
+        }
+    }
+    return y
+};
+```
+###按字母排序，对每行进行数组排序
+```javascript
+function SetSort(){
+    var text=K1.value.split(/[\r\n]/).sort().join("\r\n");//顺序
+    var test=K1.value.split(/[\r\n]/).sort().reverse().join("\r\n");//反序
+    K1.value=K1.value!=text?text:test;
+}
+```
+###字符串反序
+```javascript
+function IsReverse(text){
+    return text.split('').reverse().join('');
+}
+```
+###清除html代码中的脚本
+```javascript
+function clear_script(){
+    K1.value=K1.value.replace(/<script.*?>[\s\S]*?<\/script>|\s+on[a-zA-Z]{3,16}\s?=\s?"[\s\S]*?"|\s+on[a-zA-Z]{3,16}\s?=\s?'[\s\S]*?'|\s+on[a-zA-Z]{3,16}\s?=[^ >]+/ig,"");
+}
+```
+###动态执行JavaScript脚本
+```javascript
+function javascript(){
+    try{
+      eval(K1.value);
+    }catch(e){
+      alert(e.message);
+    }
+}
+```
+###动态执行VBScript脚本
+```javascript
+function vbscript(){
+    try{
+        var script=document.getElementById("K1").value;
+        if(script.trim()=="")return;
+        window.execScript('On Error Resume Next \n'+script+'\n If Err.Number<>0 Then \n MsgBox "请输入正确的VBScript脚本!",48,"脚本错误!" \n End If',"vbscript")
+    }catch(e){
+        alert(e.message);
+    }
+}
+```
+###金额大写转换函数
+```javascript
+function transform(tranvalue) {
+    try {
+        var i = 1;
+        var dw2 = new Array("", "万", "亿"); //大单位
+        var dw1 = new Array("拾", "佰", "仟"); //小单位
+        var dw = new Array("零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖"); //整数部分用
+        //以下是小写转换成大写显示在合计大写的文本框中     
+        //分离整数与小数
+        var source = splits(tranvalue);
+        var num = source[0];
+        var dig = source[1];
+        //转换整数部分
+        var k1 = 0; //计小单位
+        var k2 = 0; //计大单位
+        var sum = 0;
+        var str = "";
+        var len = source[0].length; //整数的长度
+        for (i = 1; i <= len; i++) {
+              var n = source[0].charAt(len - i); //取得某个位数上的数字
+              var bn = 0;
+              if (len - i - 1 >= 0) {
+                bn = source[0].charAt(len - i - 1); //取得某个位数前一位上的数字
+              }
+              sum = sum + Number(n);
+              if (sum != 0) {
+                str = dw[Number(n)].concat(str); //取得该数字对应的大写数字，并插入到str字符串的前面
+                if (n == '0') sum = 0;
+              }
+              if (len - i - 1 >= 0) { //在数字范围内
+                if (k1 != 3) { //加小单位
+                      if (bn != 0) {
+                        str = dw1[k1].concat(str);
+                      }
+                      k1++;
+                } else { //不加小单位，加大单位
+                      k1 = 0;
+                      var temp = str.charAt(0);
+                      if (temp == "万" || temp == "亿") //若大单位前没有数字则舍去大单位
+                      str = str.substr(1, str.length - 1);
+                      str = dw2[k2].concat(str);
+                      sum = 0;
+                }
+              }
+              if (k1 == 3){ //小单位到千则大单位进一
+                k2++;
+              }
+        }
+        //转换小数部分
+        var strdig = "";
+        if (dig != "") {
+              var n = dig.charAt(0);
+              if (n != 0) {
+                strdig += dw[Number(n)] + "角"; //加数字
+              }
+              var n = dig.charAt(1);
+              if (n != 0) {
+                strdig += dw[Number(n)] + "分"; //加数字
+              }
+        }
+        str += "元" + strdig;
+    } catch(e) {
+        return "0元";
+    }
+    return str;
+}
+```
+###拆分整数与小数
+```javascript
+function splits(tranvalue) {
+    var value = new Array('', '');
+    temp = tranvalue.split(".");
+    for (var i = 0; i < temp.length; i++) {
+        value = temp;
+    }
+    return value;
+}
+```
+###resize的操作
+```javascript
+(function(){
+    var fn = function(){
+            var w = document.documentElement ? document.documentElement.clientWidth : document.body.clientWidth
+                    ,r = 1255
+                    ,b = Element.extend(document.body)
+                    ,classname = b.className;
+            if(w < r){
+                    //当窗体的宽度小于1255的时候执行相应的操作
+            }else{
+                    //当窗体的宽度大于1255的时候执行相应的操作
+            }
+    }
+    if(window.addEventListener){
+            window.addEventListener('resize', function(){ fn(); });
+    }else if(window.attachEvent){
+            window.attachEvent('onresize', function(){ fn(); });
+    }
+    fn();
+})();
+```
+###实现base64解码
+```javascript
+function base64_decode(data){
+    var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    var o1, o2, o3, h1, h2, h3, h4, bits, i = 0,ac = 0,dec = "",tmp_arr = [];
+    if (!data) { return data; }
+    data += '';
+    do { 
+            h1 = b64.indexOf(data.charAt(i++));
+            h2 = b64.indexOf(data.charAt(i++));
+            h3 = b64.indexOf(data.charAt(i++));
+            h4 = b64.indexOf(data.charAt(i++));
+            bits = h1 << 18 | h2 << 12 | h3 << 6 | h4;
+            o1 = bits >> 16 & 0xff;
+            o2 = bits >> 8 & 0xff;
+            o3 = bits & 0xff;
+            if (h3 == 64) {
+                    tmp_arr[ac++] = String.fromCharCode(o1);
+            } else if (h4 == 64) {
+                    tmp_arr[ac++] = String.fromCharCode(o1, o2);
+            } else {
+                    tmp_arr[ac++] = String.fromCharCode(o1, o2, o3);
+            }
+    } while (i < data.length);
+    dec = tmp_arr.join('');
+    dec = utf8_decode(dec);
+    return dec;
+}
+```
+###实现utf8解码
+```javascript
+function utf8_decode(str_data){
+    var tmp_arr = [],i = 0,ac = 0,c1 = 0,c2 = 0,c3 = 0;str_data += '';
+    while (i < str_data.length) {
+            c1 = str_data.charCodeAt(i);
+            if (c1 < 128) {
+                    tmp_arr[ac++] = String.fromCharCode(c1);
+                    i++;
+            } else if (c1 > 191 && c1 < 224) {       
+                    c2 = str_data.charCodeAt(i + 1);
+                    tmp_arr[ac++] = String.fromCharCode(((c1 & 31) << 6) | (c2 & 63));
+                    i += 2;
+            } else {
+                    c2 = str_data.charCodeAt(i + 1);
+                    c3 = str_data.charCodeAt(i + 2);
+                    tmp_arr[ac++] = String.fromCharCode(((c1 & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+                    i += 3;
+            }
+    } 
+    return tmp_arr.join('');
+}
+```
+###获取窗体可见范围的宽与高
+```javascript
+function getViewSize(){
+    var de=document.documentElement;
+    var db=document.body;
+    var viewW=de.clientWidth==0 ?  db.clientWidth : de.clientWidth;
+    var viewH=de.clientHeight==0 ?  db.clientHeight : de.clientHeight;
+    return Array(viewW ,viewH);
+}
+```
+###断鼠标是否移出事件
+```javascript
+function isMouseOut(e, handler) {
+    if (e.type !== 'mouseout') {
+            return false;
+    }
+    var reltg = e.relatedTarget ? e.relatedTarget : e.type === 'mouseout' ? e.toElement : e.fromElement;
+    while (reltg && reltg !== handler) {
+            reltg = reltg.parentNode;
+    }
+    return (reltg !== handler);
+}
+```
+###半角转换为全角函数
+```javascript
+function ToDBC(str){
+    var result = '';
+    for(var i=0; i < str.length; i++){
+        code = str.charCodeAt(i);
+        if(code >= 33 && code <= 126){
+              result += String.fromCharCode(str.charCodeAt(i) + 65248);
+        }else if (code == 32){
+              result += String.fromCharCode(str.charCodeAt(i) + 12288 - 32);
+        }else{
+              result += str.charAt(i);
+        }
+    }
+    return result;
+}
+```
+###全角转换为半角函数
+```javascript
+function ToCDB(str){
+    var result = '';
+    for(var i=0; i < str.length; i++){
+        code = str.charCodeAt(i);
+        if(code >= 65281 && code <= 65374){
+              result += String.fromCharCode(str.charCodeAt(i) - 65248);
+        }else if (code == 12288){
+              result += String.fromCharCode(str.charCodeAt(i) - 12288 + 32);
+        }else{
+              result += str.charAt(i);
+        }
+    }
+    return result;
+}
+```
 
