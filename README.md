@@ -393,12 +393,14 @@ function isAndroidMobileDevice(){
     return (/android/i.test(navigator.userAgent.toLowerCase()));
 }
  ```
+
  ###判断是否Touch屏幕
  ```javascript
 function isTouchScreen(){
     return (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
 }
  ```
+ 
  ###判断是否打开视窗
  ```javascript
 function isViewportOpen() {
