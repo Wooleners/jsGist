@@ -401,13 +401,13 @@ function isTouchScreen(){
 }
  ```
 
- #####判断是否打开视窗
+###判断是否打开视窗
  ```javascript
 function isViewportOpen() {
     return !!document.getElementById('wixMobileViewport');
 }
  ```
-#####获取移动设备初始化大小
+###获取移动设备初始化大小
 ```javascript
 function getInitZoom(){
     if(!this._initZoom){
