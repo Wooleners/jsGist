@@ -207,3 +207,95 @@ function appendscript(src, text, reload, charset) {
     } catch(e) {}
 }
 ```
+###清除脚本
+```javascript
+function stripscript(s) {
+    return s.replace(/<script.*?>.*?<\/script>/ig, '');
+}
+```
+###返回脚本内容
+```javascript
+function evalscript(s) {
+    if(s.indexOf('<script') == -1) return s;
+    var p = /<script[^\>]*?>([^\x00]*?)<\/script>/ig;
+    var arr = [];
+    while(arr = p.exec(s)) {
+        var p1 = /<script[^\>]*?src=\"([^\>]*?)\"[^\>]*?(reload=\"1\")?(?:charset=\"([\w\-]+?)\")?><\/script>/i;
+        var arr1 = [];
+        arr1 = p1.exec(arr[0]);
+        if(arr1) {
+            appendscript(arr1[1], '', arr1[2], arr1[3]);
+        } else {
+            p1 = /<script(.*?)>([^\x00]+?)<\/script>/i;
+            arr1 = p1.exec(arr[0]);
+            appendscript('', arr1[2], arr1[1].indexOf('reload=') != -1);
+        }
+    }
+    return s;
+}
+```
+###返回按ID检索的元素对象
+```javascript
+function $(id) {
+    return !id ? null : document.getElementById(id);
+}
+```
+###事件
+#####bind
+```javascript
+function addEventSamp(obj,evt,fn){ 
+    if(!oTarget){return;}
+    if (obj.addEventListener) { 
+        obj.addEventListener(evt, fn, false); 
+    }else if(obj.attachEvent){ 
+        obj.attachEvent('on'+evt,fn); 
+    }else{
+        oTarget["on" + sEvtType] = fn;
+    } 
+}
+```
+#####delete
+```javascript
+function delEvt(obj,evt,fn){
+    if(!obj){return;}
+    if(obj.addEventListener){
+        obj.addEventListener(evt,fn,false);
+    }else if(oTarget.attachEvent){
+        obj.attachEvent("on" + evt,fn);
+    }else{
+        obj["on" + evt] = fn;
+    }
+}
+```
+###扩展元素对象方法
+#####on
+```javascript
+Element.prototype.on = Element.prototype.addEventListener;
+ 
+NodeList.prototype.on = function (event, fn) {、
+    []['forEach'].call(this, function (el) {
+        el.on(event, fn);
+    });
+    return this;
+};
+```
+#####trigger
+```javascript
+Element.prototype.trigger = function (type, data) {
+    var event = document.createEvent('HTMLEvents');
+    event.initEvent(type, true, true);
+    event.data = data || {};
+    event.eventName = type;
+    event.target = this;
+    this.dispatchEvent(event);
+    return this;
+};
+ 
+NodeList.prototype.trigger = function (event) {
+    []['forEach'].call(this, function (el) {
+        el['trigger'](event);
+    });
+    return this;
+};
+```
+
