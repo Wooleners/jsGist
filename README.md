@@ -298,4 +298,165 @@ NodeList.prototype.trigger = function (event) {
     return this;
 };
 ```
+###检查URL链接是否有效[仅IE]
+```javascript
+function getUrlState(URL){ 
+    var xmlhttp = new ActiveXObject("microsoft.xmlhttp"); 
+    xmlhttp.Open("GET",URL, false);  
+    try{  
+            xmlhttp.Send(); 
+    }catch(e){
+    }finally{ 
+        var result = xmlhttp.responseText; 
+        if(result){
+            if(xmlhttp.Status==200){ 
+                return(true); 
+             }else{ 
+                   return(false); 
+             } 
+         }else{ 
+             return(false); 
+         } 
+    }
+}
+```
+###CSS优化
+#####格式化
+```javascript
+function formatCss(s){//格式化代码
+    s = s.replace(/\s*([\{\}\:\;\,])\s*/g, "$1");
+    s = s.replace(/;\s*;/g, ";"); //清除连续分号
+    s = s.replace(/\,[\s\.\#\d]*{/g, "{");
+    s = s.replace(/([^\s])\{([^\s])/g, "$1 {\n\t$2");
+    s = s.replace(/([^\s])\}([^\n]*)/g, "$1\n}\n$2");
+    s = s.replace(/([^\s]);([^\s\}])/g, "$1;\n\t$2");
+    return s;
+}
+```
+#####压缩
+```javascript
+function compressCss (s) {//压缩代码
+    s = s.replace(/\/\*(.|\n)*?\*\//g, ""); //删除注释
+    s = s.replace(/\s*([\{\}\:\;\,])\s*/g, "$1");
+    s = s.replace(/\,[\s\.\#\d]*\{/g, "{"); //容错处理
+    s = s.replace(/;\s*;/g, ";"); //清除连续分号
+    s = s.match(/^\s*(\S+(\s+\S+)*)\s*$/); //去掉首尾空白
+    return (s == null) ? "" : s[1];
+}
+```
+###获取当前路径
+```javascript
+var currentPageUrl = "";
+if (typeof this.href === "undefined") {
+    currentPageUrl = document.location.toString().toLowerCase();
+}else {
+    currentPageUrl = this.href.toString().toLowerCase();
+}
+```
+##移动相关
+###判断是否移动设备
+```javascript
+function isMobile(){
+    if (typeof this._isMobile === 'boolean'){
+        return this._isMobile;
+    }
+    var screenWidth = this.getScreenWidth();
+    var fixViewPortsExperiment = rendererModel.runningExperiments.FixViewport ||rendererModel.runningExperiments.fixviewport;
+    var fixViewPortsExperimentRunning = fixViewPortsExperiment && (fixViewPortsExperiment.toLowerCase() === "new");
+    if(!fixViewPortsExperiment){
+        if(!this.isAppleMobileDevice()){
+            screenWidth = screenWidth/window.devicePixelRatio;
+        }
+    }
+    var isMobileScreenSize = screenWidth < 600;
+    var isMobileUserAgent = false;
+    this._isMobile = isMobileScreenSize && this.isTouchScreen();
+    return this._isMobile;
+}
+```
+###判断是否移动设备访问
+#####all
+```javascript
+function isMobileUserAgent(){
+    return (/iphone|ipod|android.*mobile|windows.*phone|blackberry.*mobile/i.test(window.navigator.userAgent.toLowerCase()));
+}
+```
+#####apple
+```javascript
+function isAppleMobileDevice(){
+    return (/iphone|ipod|ipad|Macintosh/i.test(navigator.userAgent.toLowerCase()));
+}
+```
+#####android
+ ```javascript
+function isAndroidMobileDevice(){
+    return (/android/i.test(navigator.userAgent.toLowerCase()));
+}
+ ```
+ ###判断是否Touch屏幕
+ ```javascript
+function isTouchScreen(){
+    return (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+}
+ ```
+ ###判断是否打开视窗
+ ```javascript
+function isViewportOpen() {
+    return !!document.getElementById('wixMobileViewport');
+}
+ ```
+###获取移动设备初始化大小
+```javascript
+function getInitZoom(){
+    if(!this._initZoom){
+        var screenWidth = Math.min(screen.height, screen.width);
+        if(this.isAndroidMobileDevice() && !this.isNewChromeOnAndroid()){
+            screenWidth = screenWidth/window.devicePixelRatio;
+        }
+            this._initZoom = screenWidth /document.body.offsetWidth;
+        }
+    return this._initZoom;
+}
+```
+###获取移动设备最大化大小
+```javascript
+function getZoom(){
+    var screenWidth = (Math.abs(window.orientation) === 90) ? Math.max(screen.height, screen.width) : Math.min(screen.height, screen.width);
+    if(this.isAndroidMobileDevice() && !this.isNewChromeOnAndroid()){
+        screenWidth = screenWidth/window.devicePixelRatio;
+    }
+    var FixViewPortsExperiment = rendererModel.runningExperiments.FixViewport || rendererModel.runningExperiments.fixviewport;
+    var FixViewPortsExperimentRunning = FixViewPortsExperiment && (FixViewPortsExperiment === "New" || FixViewPortsExperiment === "new");
+    if(FixViewPortsExperimentRunning){
+        return screenWidth / window.innerWidth;
+    }else{
+        return screenWidth / document.body.offsetWidth;
+    }
+}
+```
+###获取移动设备屏幕宽度
+```javascript
+function getScreenWidth(){
+    var smallerSide = Math.min(screen.width, screen.height);
+    var fixViewPortsExperiment = rendererModel.runningExperiments.FixViewport || rendererModel.runningExperiments.fixviewport;
+    var fixViewPortsExperimentRunning = fixViewPortsExperiment && (fixViewPortsExperiment.toLowerCase() === "new");
+    if(fixViewPortsExperiment){
+        if(this.isAndroidMobileDevice() && !this.isNewChromeOnAndroid()){
+            smallerSide = smallerSide/window.devicePixelRatio;
+        }
+    }
+    return smallerSide;
+}
+```
+###完美判断是否为网址
+```javascript
+function IsURL(strUrl) {
+    var regular = /^\b(((https?|ftp):\/\/)?[-a-z0-9]+(\.[-a-z0-9]+)*\.(?:com|edu|gov|int|mil|net|org|biz|info|name|museum|asia|coop|aero|[a-z][a-z]|((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]\d)|\d))\b(\/[-a-z0-9_:\@&?=+,.!\/~%\$]*)?)$/i
+    if (regular.test(strUrl)) {
+        return true;
+    }else {
+        return false;
+    }
+}
+```
 
