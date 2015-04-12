@@ -1057,7 +1057,7 @@ function getViewSize(){
     return Array(viewW ,viewH);
 }
 ```
-###断鼠标是否移出事件
+###判断鼠标是否移出事件
 ```javascript
 function isMouseOut(e, handler) {
     if (e.type !== 'mouseout') {
