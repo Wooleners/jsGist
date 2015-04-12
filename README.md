@@ -394,7 +394,7 @@ function isAndroidMobileDevice(){
 }
  ```
 
- ###判断是否Touch屏幕
+###判断是否Touch屏幕
  ```javascript
 function isTouchScreen(){
     return (('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
