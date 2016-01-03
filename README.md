@@ -36,7 +36,7 @@ String.prototype.trim = function() {
 ```
 ###清除左空格/右空格
 ```javascript
-function ltrim(s){ return s.replace( /^(\s*|　*)/, ""); } 
+function ltrim(s){ return s.replace( /^(\s*|　*)/, ""); }
 function rtrim(s){ return s.replace( /(\s*|　*)$/, ""); }
 ```
 ###判断是否由某个字符串开头
@@ -46,7 +46,7 @@ String.prototype.startWith = function (s) {
 }
 ```
 ###判断是否由某个字符串结束
-```javascript 
+```javascript
 String.prototype.endWith = function (s) {
     var d = this.length - s.length;
     return (d >= 0 && this.lastIndexOf(s) == d)
@@ -102,7 +102,7 @@ function isDigit(value) {
     }
 }
 ```
-###Cookie 
+###Cookie
 #####setter
 ```javascript
 function setCookie(name, value, Hours) {
@@ -180,7 +180,7 @@ function appendscript(src, text, reload, charset) {
     if(reload && $(id)) {
         $(id).parentNode.removeChild($(id));
     }
- 
+
     evalscripts.push(id);
     var scriptNode = document.createElement("script");
     scriptNode.type = "text/javascript";
@@ -243,15 +243,15 @@ function $(id) {
 ###事件
 #####bind
 ```javascript
-function addEventSamp(obj,evt,fn){ 
+function addEventSamp(obj,evt,fn){
     if(!oTarget){return;}
-    if (obj.addEventListener) { 
-        obj.addEventListener(evt, fn, false); 
-    }else if(obj.attachEvent){ 
-        obj.attachEvent('on'+evt,fn); 
+    if (obj.addEventListener) {
+        obj.addEventListener(evt, fn, false);
+    }else if(obj.attachEvent){
+        obj.attachEvent('on'+evt,fn);
     }else{
         oTarget["on" + sEvtType] = fn;
-    } 
+    }
 }
 ```
 #####delete
@@ -271,7 +271,7 @@ function delEvt(obj,evt,fn){
 #####on
 ```javascript
 Element.prototype.on = Element.prototype.addEventListener;
- 
+
 NodeList.prototype.on = function (event, fn) {、
     []['forEach'].call(this, function (el) {
         el.on(event, fn);
@@ -290,7 +290,7 @@ Element.prototype.trigger = function (type, data) {
     this.dispatchEvent(event);
     return this;
 };
- 
+
 NodeList.prototype.trigger = function (event) {
     []['forEach'].call(this, function (el) {
         el['trigger'](event);
@@ -300,23 +300,23 @@ NodeList.prototype.trigger = function (event) {
 ```
 ###检查URL链接是否有效[仅IE]
 ```javascript
-function getUrlState(URL){ 
-    var xmlhttp = new ActiveXObject("microsoft.xmlhttp"); 
+function getUrlState(URL){
+    var xmlhttp = new ActiveXObject("microsoft.xmlhttp");
     xmlhttp.Open("GET",URL, false);  
     try{  
-            xmlhttp.Send(); 
+            xmlhttp.Send();
     }catch(e){
-    }finally{ 
-        var result = xmlhttp.responseText; 
+    }finally{
+        var result = xmlhttp.responseText;
         if(result){
-            if(xmlhttp.Status==200){ 
-                return(true); 
-             }else{ 
-                   return(false); 
-             } 
-         }else{ 
-             return(false); 
-         } 
+            if(xmlhttp.Status==200){
+                return(true);
+             }else{
+                   return(false);
+             }
+         }else{
+             return(false);
+         }
     }
 }
 ```
@@ -557,24 +557,24 @@ function chgCase(sStr,iCase){
     }
     var i,oRs=[],iCode;
     if(iCase){/*半->全*/
-        for(i=0; i<sStr.length;i+=1){ 
+        for(i=0; i<sStr.length;i+=1){
             iCode = sStr.charCodeAt(i);
             if(iCode == 32){
                 iCode = 12288;                                
             }else if(iCode < 127){
                 iCode += 65248;
             }
-                oRs.push(String.fromCharCode(iCode)); 
+                oRs.push(String.fromCharCode(iCode));
             }                
     }else{/*全->半*/
-        for(i=0; i<sStr.length;i+=1){ 
+        for(i=0; i<sStr.length;i+=1){
             iCode = sStr.charCodeAt(i);
             if(iCode == 12288){
                 iCode = 32;
             }else if(iCode > 65280 && iCode < 65375){
                 iCode -= 65248;                                
             }
-                oRs.push(String.fromCharCode(iCode)); 
+                oRs.push(String.fromCharCode(iCode));
          }                
     }                
     return oRs.join("");                
@@ -646,13 +646,13 @@ function timeFormat(time){
         curYear = curDate.getFullYear(),
         curHour = curDate.getHours(),
         timeStr;
- 
+
     if(year < curYear){
         timeStr = year +'年'+ month +'月'+ day +'日 '+ hour +':'+ minute;
     }else{
         var pastTime = curDate - date,
             pastH = pastTime/3600000;
- 
+
         if(pastH > curHour){
               timeStr = month +'月'+ day +'日 '+ hour +':'+ minute;
         }else if(pastH >= 1){
@@ -677,16 +677,16 @@ function getOffset(e){
           eventCoord,
           pageCoord,
           offsetCoord;
- 
+
     // 计算当前触发元素到文档的距离
     pageCoord = getPageCoord(target);
- 
+
     // 计算光标到文档的距离
     eventCoord = {
         X : window.pageXOffset + e.clientX,
         Y : window.pageYOffset + e.clientY
     };
- 
+
     // 相减获取光标到第一个定位的父元素的坐标
     offsetCoord = {
         X : eventCoord.X - pageCoord.X,
@@ -694,7 +694,7 @@ function getOffset(e){
     };
     return offsetCoord;
 }
- 
+
 function getPageCoord(element){
     var coord = { X : 0, Y : 0 };
     // 计算从当前触发元素到根节点为止，
@@ -723,7 +723,7 @@ function getPageCoord(element){
 /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/;
 //url地址
 /^[a-zA-z]+://(\w+(-\w+)*)(\.(\w+(-\w+)*))*(\?\S*)?$/;
-或：^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$ 
+或：^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$
 //年/月/日（年-月-日、年.月.日）
 /^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/;
 //匹配中文字符
@@ -747,27 +747,27 @@ function getPageCoord(element){
 //sql 语句
 ^(select|drop|delete|create|update|insert).*$
 //提取信息中的网络链接
-(h|H)(r|R)(e|E)(f|F) *= *('|")?(\w|\\|\/|\.)+('|"| *|>)? 
+(h|H)(r|R)(e|E)(f|F) *= *('|")?(\w|\\|\/|\.)+('|"| *|>)?
 //提取信息中的邮件地址
-\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)* 
+\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
 //提取信息中的图片链接
-(s|S)(r|R)(c|C) *= *('|")?(\w|\\|\/|\.)+('|"| *|>)? 
+(s|S)(r|R)(c|C) *= *('|")?(\w|\\|\/|\.)+('|"| *|>)?
 //提取信息中的 IP 地址
 (\d+)\.(\d+)\.(\d+)\.(\d+)
 //取信息中的中国手机号码
-(86)*0*13\d{9} 
+(86)*0*13\d{9}
 //提取信息中的中国邮政编码
-[1-9]{1}(\d+){5} 
+[1-9]{1}(\d+){5}
 //提取信息中的浮点数（即小数）
-(-?\d*)\.?\d+ 
+(-?\d*)\.?\d+
 //提取信息中的任何数字
 (-?\d*)(\.\d+)?
 //电话区号
 ^0\d{2,3}$
 //腾讯 QQ 号
-^[1-9]*[1-9][0-9]*$ 
+^[1-9]*[1-9][0-9]*$
 //帐号（字母开头，允许 5-16 字节，允许字母数字下划线）
-^[a-zA-Z][a-zA-Z0-9_]{4,15}$ 
+^[a-zA-Z][a-zA-Z0-9_]{4,15}$
 //中文、英文、数字及下划线
 ^[\u4e00-\u9fa5_a-zA-Z0-9]+$
 ```
@@ -797,7 +797,7 @@ backTop('goTop');
 ###获得URL中GET参数值
 #####用法：如果地址是 test.htm?t1=1&t2=2&t3=3, 那么能取得：GET["t1"], GET["t2"], GET["t3"]
 ```javascript
-function get_get(){ 
+function get_get(){
     querystr = window.location.href.split("?")
     if(querystr[1]){
         GETs = querystr[1].split("&");
@@ -814,7 +814,7 @@ function get_get(){
 ###打开一个窗体通用方法
 ```javascript
 function openWindow(url,windowName,width,height){
-    var x = parseInt(screen.width / 2.0) - (width / 2.0); 
+    var x = parseInt(screen.width / 2.0) - (width / 2.0);
     var y = parseInt(screen.height / 2.0) - (height / 2.0);
     var isMSIE= (navigator.appName == "Microsoft Internet Explorer");
     if (isMSIE) {
@@ -1002,7 +1002,7 @@ function base64_decode(data){
     var o1, o2, o3, h1, h2, h3, h4, bits, i = 0,ac = 0,dec = "",tmp_arr = [];
     if (!data) { return data; }
     data += '';
-    do { 
+    do {
             h1 = b64.indexOf(data.charAt(i++));
             h2 = b64.indexOf(data.charAt(i++));
             h3 = b64.indexOf(data.charAt(i++));
@@ -1043,7 +1043,7 @@ function utf8_decode(str_data){
                     tmp_arr[ac++] = String.fromCharCode(((c1 & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
                     i += 3;
             }
-    } 
+    }
     return tmp_arr.join('');
 }
 ```
@@ -1104,4 +1104,4 @@ function ToCDB(str){
     return result;
 }
 ```
-
+###识别邮件
